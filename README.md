@@ -1,232 +1,206 @@
 # Scalable Solver for Spectral Stochastic FEM using Domain Decomposition with One/Two-Level Preconditioner
 
-This solver have capabilities to solve stochastic steady-state diffusion equation and static linear elasticity (2D & 3D) using Domain Decomposition Methods. 
+## Overview
+This solver targets stochastic steady-state diffusion and static linear elasticity (2D & 3D) problems using domain decomposition methods with scalable one- and two-level preconditioners. The `master` branch keeps a clean copy of the code, while the `cedar`, `graham`, `niagara`, `beluga`, and other branches contain machine-specific adjustments tested on their respective clusters.
 
-This SSFEM code has different branches master, cedar, graham, niagara, beluga etc. 
-Master branch is just the master copy of the whole code. 
+## Core Components
+1. **FEniCS** – deterministic FE matrix/vector assembly.
+2. **PETSc** – sparse storage and linear algebra for stochastic FE matrices.
+3. **MPI** – parallel execution of PETSc local routines.
 
+## Tested Software Stack
+- **FORTRAN**: GNU GCC
+- **MPI**: Open MPI
+- **Gmsh**: 3.0.4 (use this exact version)
+  - Binary: http://gmsh.info/bin/
+  - Source: https://gitlab.onelab.info/gmsh/gmsh/blob/master/README.txt
+- **PETSc**: 3.7.5
+  - Local install: https://www.mcs.anl.gov/petsc/documentation/installation.html
+  - Remote install: see `docs/PETSC_Install.pdf`
+- **FEniCS**: 2017.1.0 (use this exact version)
+  - Local install: https://fenics.readthedocs.io/en/latest/installation.html
+  - Remote install: follow `docs/fenics/fenics_install.pdf` (scripts inside the same folder may be adapted as needed)
+  - Troubleshooting: [Compute Canada FEniCS wiki](https://docs.computecanada.ca/wiki/FEniCS)
+  - Required Python packages: `meshio`, `lxml`, `mpi4py`
+- **ParaView**: 5.4.0
+- **Python**: 3.x
+- **MATLAB**: 2017
 
-### Components
-1. FEniCS: Employed for deterministic FE matrix-vector assembly
-2. PETSc: Employed for (local) sparse storage of stochastic FE matrix-vector and associated linear algebraic calculations
-3. MPI: Employed for parallel processing of PETSc local routines
+---
 
-### Required packages: (Version Tested) ##
-* FORTRAN    :: GNU GCC 
-* MPI        :: Open MPI 
-* GMSH       :: 3.0.4 (Use only this version)
-  * Binary : http://gmsh.info/bin/
-  * Source : https://gitlab.onelab.info/gmsh/gmsh/blob/master/README.txt
-* PETSc      :: 3.7.5
-    * Local Install  : https://www.mcs.anl.gov/petsc/documentation/installation.html
-    * Remote Install : Refer to 'PETSC_Install.pdf' under docs folder
-* FEniCS     :: 2017.1.0 (Use only this version)
-    * Local installation : https://fenics.readthedocs.io/en/latest/installation.html#
-      Remote Install:                    
-    *  Follow instructions from "fenics_install.pdf" available in docs/fenics folder. One could also check corresponding script files for installation and modify accordingly.
-    *  For FEniCS installation issues and updates refer to [computeCanada wiki page for FEniCS](https://docs.computecanada.ca/wiki/FEniCS)
-    *  You also need to install following small packages: "meshio" (pip3 install meshio), "lxml" (pip3 install lxml), "mpi4py"(pip3 install mpi4py)
+## Local Workflow (tested on macOS)
+Work from the top-level project directory and use separate terminals for concurrent steps.
 
-* PARAVIEW   :: 5.4.0
-* PYTHON     :: 3
-* MATLAB     :: 2017
+### Step 1 – Preprocess (KLE/PCE and mesh generation)
+```
+$ cd data/klePceData
+$ gfortran KLE_PCE_Data_commandLineArg.F90
+$ ./a.out          # enter desired nDim (number of random variables)
+$ cd ../meshData
+```
 
+- **3D domain**
+  - Edit `preprocess3D.sh` to tune mesh density (`LC`) and partitions (`NP`).
+  - Run `sh preprocess3D.sh` to create `.dat` mesh data.
+  - Convert to FEniCS XML:
+    ```
+    $ cd ../../external/dolfin/src/
+    $ python3 gmshData_fenicsXML_3D.py
+    ```
 
-## Running in Local machine (Tested in MacBookPro)
+- **2D domain**
+  - Edit `preprocess2D.sh` (LC, NP).
+  - Run `sh preprocess2D.sh` to create `.dat` meshes.
+  - Convert to FEniCS XML:
+    ```
+    $ cd ../../external/dolfin/src/
+    $ python3 gmshData_fenicsXML_2D.py
+    ```
 
-### Step-1:: preprocess :: KLE/PCE & MeshData Generation
-* from top level project directoy open terminal (1)
-* $ cd data/klePceData
-* $ gfortran KLE_PCE_Data_commandLineArg.F90
-* $ ./a.out                :: enter the number of nDim (RVs) intend to use
-* $ cd ../data/meshData                     :: to prepare mesh data
+### Step 2 – Deterministic FEM assembly with FEniCS
+```
+$ fenicsproject start dolfin
+$ cd external/dolfin/src/
+```
+- **3D domain**
+  - `python poisson3D_stochasticDDM_onelevel.py` → one-level DD matrices in `data/Amats/`
+  - `python poisson3D_stochasticDDM_twolevel.py` → two-level DD matrices in `data/Amats/`
+- **2D domain**
+  - `python poisson2D_stochasticDDM_onelevel.py` → one-level DD matrices
+  - `python poisson2D_stochasticDDM_twolevel.py` → two-level DD matrices
 
-### 3D Domain
-* preprocess3D.sh                      :: here you can adjust mesh density (LC) and partitions (NP)
-* $ sh preprocess3D.sh              :: should create 3D mesh data in same folder (.dat)
-* $ cd ../../external/dolfin/src/
-* $ python3 gmshData_fenicsXML_3D.py   :: should create FEniCS-xml data using GMSH-msh data
+### Step 3 – SSFEM solve (Fortran/MPI/PETSc)
+```
+$ cd src/2Dpoisson_*    # or 3Dpoisson_* / 3Delasticity_*
+$ cp clusterMakefiles/makefile_mac makefile
+$ make all
+$ petscexec -np $NP ./a.out   # prints iteration counts and writes to data/vtkOutputs/
+```
 
-### 2D Domain
-* preprocess2D.sh                        :: here you can adjust mesh density (LC) and partitions (NP)
-* $ sh preprocess2D.sh                   :: should create 2D GMSH-mesh data in same folder (.dat)
-* $ cd ../../external/dolfin/src/
-* $ python3 gmshData_fenicsXML_2D.py   :: should create FEniCS-xml data using GMSH-msh data
+### Step 4 – Post-process (MATLAB / ParaView)
+```
+$ cd data/vtkOutputs
+```
+- For 3D Poisson: `matlabTerminal -r writeVtk`
+- For 3D elasticity: `matlabTerminal -r writeVecVtk`
+- Visualize: `paraview out_*.vtk` (2D VTK files are created directly).
 
-### Step-2:: process:: FEM using FEniCS
-* from top level project directoy open terminal (2)
-* $ fenicsproject start dolfin
-* $ cd external/dolfin/src/
+### Special 2D comparison workflow (all-in-one)
+1. Edit `preprocess2D.sh` for partitions and mesh density, then run it.
+2. Convert to XML:
+   ```
+   $ cd ../../external/dolfin/src/
+   $ python3 pointElements_xml.py
+   ```
+3. Start FEniCS (`fenicsproject start dolfin`) and generate DD matrices:
+   ```
+   $ cd external/dolfin/src/
+   $ python stoDDM_poisson.py
+   ```
+4. Build and run either `src/onelevel` or `src/twolevel`:
+   ```
+   $ make all
+   $ petscexec -np $NP ./a.out
+   ```
 
-### 3D Domain: one level & two level DDM
-* $ python poisson3D_stochasticDDM_onelevel.py     :: create onelevel 3D DD-matrices in /data/Amats/
-* $ python poisson3D_stochasticDDM_twolevel.py     :: create twolevel 3D DD-matrices in /data/Amats/
+---
 
-### 2D Domain: onelevel & twolevel DDM
-* $ python poisson2D_stochasticDDM_onelevel.py     :: create onelevel 2D DD-matrices in /data/Amats/
-* $ python poisson2D_stochasticDDM_twolevel.py     :: create twolevel 2D DD-matrices in /data/Amats/
+## Remote Cluster Workflow (Cedar, Graham, Niagara, Beluga)
 
-### Step-3:: process:: SSFEM using Fortran/MPI/PETSc
-* from top level project directoy open terminal (3)
-* $ cd src/2Dpoisson_*  or  cd src/3Dpoisson_*  or  cd src/3Delasticity_*     :: go to intended solvers-scripts
-* $ cp clusterMakefiles/makefile_mac makefile
-* $ make all
-* $ petscexec -np $NP ./a.out      :: should print number of iterations & write outputs in data/vtkOutputs/
+### Step 1 – Clone the repository (private Bitbucket repo)
+```
+$ git clone https://sudhipv@bitbucket.org/sudhipv/ssfem_fenics.git
+$ cd ssfem_fenics
+$ git fetch && git checkout <branch>   # defaults to master
+```
 
-### Step-4:: postprocess:: Visualize output using Matlab/ParaView
-* from top level project directory terminal (4)
-* $ cd data/vtkOutputs    ::
-#### For poisson3D
-* $ matlabTerminal -r writeVtk
-#### For elasticity3D
-* $ matlabTerminal -r writeVecVtk
-* $ paraview out_*.vtk          :: open *.vtk files with paraview to check outputs (Note: For 2D vtk files are created directly)
+### Step 2 – Preprocess and process (Gmsh / FEniCS / MPI / PETSc)
+Run from `jobscripts/<machine-name>/` (choose `cedar`, `niagara`, `beluga`, or `graham`). Each script has inline comments describing required path edits.
 
+1. `sh preprocess.sh`
+   - Prompts for `nDim` (number of random variables) and writes KLE/PCE data to `data/klePceData/`.
+   - Control mesh density via `lc` (e.g., `lc=0.1` → `lc=0.09`, keep the first `lc` fixed at `0.1`).
+   - Select coarse grid type via `wb` (`1` = wire-basket, `0` = vertex).
+   - Set partitions via `NP` (default 32). Mesh/DDM data land in `data/meshData/`.
+2. `sh processFEniCS.sh` or `sh processFEniCS_MPI.sh`
+   - Adjust job resources inside the script (e.g., `time=0-00:10` → `0-00:15`) and set the desired output directory.
+   - Script names invoked by `processFEniCS_MPI.sh` depend on the physics (e.g., `run_fenics_poisson2D_stochasticDDM_parallel_twolevel.sh`, `run_fenics_elasticity3D_stochasticDDM_parallel_twolevel.sh`). Mail notifications trigger only on completion/failure; update addresses in `external/dolfin/src/jobscripts` as needed.
+   - If MPI job initialization fails, inspect `/scratch/<user>/ssfem_fenics/data/slurm/` (e.g., `/scratch/sudhipv/sudhipv/ssfem_fenics/data/slurm/`) for details. A successful run prints the random variable settings, BC application, and `==========================Success============================`.
 
-### Special case: 2D Domain (Comparison): All in one steps
-* $ vi preprocess2D.sh    :: to adjust number of partitions & mesh density
-* $ sh preprocess2D.sh                   :: should create DD-mesh data in same folder (.dat)
-* $ cd ../../external/dolfin/src/
-* $ python3 pointElements_xml.py :: should create DD-mesh data in /data (.xml)
-* $ fenicsproject start dolfin
-* $ cd external/dolfin/src/
-* $ python stoDDM_poisson.py      :: should create DD-matrices in /data/Amats/subdom000* (.dat)
-* $ cd src/onelevel or  cd src/twolevel
-* $ make all
-* $ petscexec -np $NP ./a.out        :: should print number of iterations & write outputs in data/vtkOutputs/
+3. `sh processMPI.sh`
+   - Controls Fortran compilation and MPI/PETSc execution.
+   - Tunable parameters inside the script:
+     1. `time=0-00:10` → modify run time (default 10 min).
+     2. `tasks-per-node=32` (adjust to match allocation).
+     3. `nodes=1` (increase if needed).
+     4. `-np` flag (ensure `np = nodes * tasks-per-node`).
+     5. `job-name`/`output-file` (e.g., `job-name=d2_lc05_p32`, where `d` = dimensions, `lc` = mesh density, `p` = partitions).
+   - Outputs are written to `data/vtkOutputs/`.
 
+### Step 3 – Post-process after remote runs
+1. Copy `posprocess3D.sh` (located in `data/vtkOutputs/`) to your local machine, edit the file paths, and run it or follow the manual steps below:
+   ```
+   $ cd data/vtkOutputs
+   $ scp <cluster>:~/scratch/<user>/ssfem_fenics/data/vtkOutputs/*.dat .
+   ```
+2. For 3D ParaView visualizations also copy:
+   ```
+   $ scp <cluster>:~/scratch/<user>/ssfem_fenics/data/meshData/points.dat .
+   $ scp <cluster>:~/scratch/<user>/ssfem_fenics/data/meshData/tetrahedrons4c.dat .
+   $ scp <cluster>:~/scratch/<user>/ssfem_fenics/data/klePceData/pcedata.dat .
+   ```
+3. Generate VTK:
+   - Poisson 3D → `matlabTerminal -r writeVtk`
+   - Elasticity 3D → `matlabTerminal -r writeVecVtk`
+4. Visualize with `paraview out_*.vtk`.
 
-## Running Code in REMOTE CLUSTERS (CEDAR, GRAHAM, NIAGARA, BELUGA)
+### Job submission & monitoring
+- Submit, monitor, and cancel jobs:
+  ```
+  $ qsub run_ddm.sh
+  $ qstat -u <userID>
+  $ qdel <jobID>
+  ```
+- Inspect outputs once jobs finish:
+  ```
+  $ more outputfile*
+  $ more errorfile*
+  ```
+- Miscellaneous helpers:
+  - `sacct` – view status for recent SLURM jobs.
+  - `more slrum-<JobID>.out` – job logs.
+  - `git fetch && git checkout graham`
+  - `git checkout -f` – discard local edits (useful when pulling latest changes).
 
-### Step-1 :: Get the repository from bitbucket (Note: private repo, needs permission to access)
-* $ git clone https://sudhipv@bitbucket.org/sudhipv/ssfem_fenics.git
-* $ git fetch && git checkout "branch" (by default it is master branch).
-* $ cd ssfem_fenics/
+---
 
+## Directory Layout
+- `src/` – stochastic solvers
+  - `3Delasticity_onelevel`, `3Delasticity_twolevel`
+  - `3Dpoisson_onelevel`, `3Dpoisson_twolevel`
+  - `2Dpoisson_onelevel`, `2Dpoisson_twolevel`
+  - Legacy solvers: `onelevel`, `twolevel`
+- `jobscripts/`
+  - `preprocessKLE.sh`, `preprocessMESH.sh`, `preprocess.sh`
+  - `processFEniCS.sh`, `processFEniCS_MPI.sh`
+  - `processMPI.sh`
+- `external/`
+  - `puffin` (MATLAB FEM package)
+  - `dolfin` (Python/C++ FEM package)
+- `data/`
+  - `klePceData`, `mallocData`, `meshData`, `vtkOutputs`
+- `docs/`
+  - Project documentation (`PETSC_Install.pdf`, `fenics_install.pdf`, etc.)
 
-### Step-2 :: preprocess & process:: GMSH/FEniCS/MPI/PETSc 
-### NOTE : Please ensure to change the paarmeters inside each script file according to the instructions numbered below it. There are places one needs to adapt the installation paths or output file paths.
-* $ cd jobscripts/        :: from top level project directory
-* $ cd machine-name/ (cedar, niagara, beluga,graham) 
-* $ sh preprocess.sh      :: This script file takes input from the user for number of random variable to use for stochastic expansion as well as the physical dimension for the problem.     
-                             One could edit out the parameters inside this script file as in steps 2, 3,4.
-      
-    1. It promt for one command line input for nDim (number of RVs): enter the desired integer (Eg: 2 for 2RVs)
-     
-     generates KLE/PCE data for selected nDim (RVs) case. Data generated inside ssfem_fenics/data/klePceData/
-       
-    2. Control mesh density using lc parameter: Eg: lc=0.1/lc=0.09  , here lc=0.1 changes to lc=0.09 (NOTE: keep first "lc" always fixed to "0.1")
-    3. Control type of coarse grid using "wb" parameter: Eg: wb=1/wb=0 , changes coarse grid from wire-basket(wb=1) to vertex grid(wb=0)
-    4. Control number of partitions using "NP" parameter: Eg: NP=32/NP=64 , changes numper of partitions from 32 to 64 (default=32)
+### Output visualization
+- Deterministic case: `paraview out_deterministic.vtk`
 
-    generates GMSH/DDM data for selected LC and NP inside ssfem_fenics/data/meshData/
-        
-* $ sh processFEniCS.sh/ processFEniCS_MPI.sh    ::  Generates FEniCS mesh data and DDM assembly Mat-Vec data
-    1. Control request time for job using "time" parameter: Eg: time=0-00:10/time=0-00:15 , changes job time from 10mins to 15mins (default=10mins)
-    2. Be sure to change the output path to your desired directory
-    
-## Note : By default mail comes only when the process ends or fails. Changes to mail id and default value have to be changed inside other script files inside : ssfem_fenics/external/dolfin/src/jobscripts.
-## Depending upon the problem you have selected this script file changes. The name of this file can be found from commands inside processFEniCS_MPI.sh. ex : run_fenics_poisson2D_stochasticDDM_parallel_twolevel.sh, 
-## run_fenics_elasticity3D_stochasticDDM_parallel_twolevel.sh
+### Cleaning
+- `sh clean.sh` – remove build and output artifacts.
 
-## In many cases the process fails because of an issue with the way MPI Job is initialized. Please ensure your job is successfull by looking at the output folder you selected while running the job
-## folder -default : /scratch/sudhipv/sudhipv/ssfem_fenics/data/slurm/.
-## In general a successful job prints out details of random variable, applying BCs, and finally success message.
-## Running FEniCS for 3D stochastic Poisson/twoLevel..
-## number of partitions: 320
-## number of dimensions: 3
-## number of pceInputss: 10
-## number of pceOutputs: 20
-## ==========================Success============================
+### Contact
+- Sudhi Sharma P V – `sudhi.pv@cmail.carleton.ca`
 
-
-
-* $ sh processMPI.sh          :: compiles FORTRAN executables and run MPI/PETSc simulation
-    1. Control request time for job using "time" parameter: Eg: time=0-00:10/time=0-00:15 , changes job time from 10mins to 15mins (default=10mins)
-    2. Control request tasks per node using "tasks-per-node" parameter: Eg: tasks-per-node=32/tasks-per-node=16 , changes from 32 to 16 (default=32)
-    3. Control request number of nodes using "nodes" parameter: Eg: nodes=1/nodes=2 , changes requested node from 1 to 2 (default=1)
-    4. Contorl number of MPI processor to compile and run using "np" parameter: Eg: -np 32/-np 16 , changes from 32 to 16 (Note: np=nodes*tasks-per-node)
-    5. Option to control job-name and output-file name eg: job-name=test/job-name=d2_lc05_p32 ,  (here d->dims, lc-> mesh density parameter, p->partitions)
-    
-### Output will be produced inside ./ssfem_fenics/data/vtkOutputs/
-    
-### Step-3 :: postprocess3D :: Copy data to HomePC and use Matlab/ParaView for postprocessing
-* from top level project directory @HomePC
-* $ cd data/vtkOutputs
-* $ copy "posprocess3D.sh" to your local pc and edit the file locations    
-* $ Then run 'sh posprocess3D.sh'  :: should do all of the steps outlined below (or follow step by step guide)
-
-### Step-3 :: step-by-step
-* $ scp -r sudhipv@graham.computecanada.ca:/~/scratch/sudhipv/ssfem_fenics/data/vtkOutputs/*.dat .
-### For 3D mesh :: Mesh-connectivity for ParaView
-* $ scp -r sudhipv@graham.computecanada.ca:/~/scratch/sudhipv/ssfem_fenics/data/meshData/points.dat .
-* $ scp -r sudhipv@graham.computecanada.ca:/~/scratch/sudhipv/ssfem_fenics/data/meshData/tetrahedrons4c.dat .
-* $ scp -r sudhipv@graham.computecanada.ca:/~/scratch/sudhipv/ssfem_fenics/data/klePceData/pcedata.dat .
-
-#### For poisson3D
-* $ matlabTerminal -r writeVtk
-#### For elasticity3D
-* $ matlabTerminal -r writeVecVtk
-#### Use ParaView for visualization
-* $ paraview out_*.vtk      :: open *.vtk files with paraview to check outputs
-
-
-## NOTE:: Additional Useful Commands
-* $ sacct  :: to check status for all of your recent jobs submitted using slrum
-* $ more slrum-JobID.out  :: for outputs info of perticular JobID
-* $ git fetch && git checkout graham
-* $ git checkout -f   :: this will discard any local changes (useful to pull latest changes and discard old one)
-
-
-### Folder structure : ###
-* src    :: executable (all stochastic cases)
-    - 3Delasticity_twolevel 
-    - 3Delasticity_onelevel
-    - 3Dpoisson_twolevel
-    - 3Dpoisson_onelevel
-    - 2Dpoisson_twolevel
-    - 2Dpoisson_onelevel
-    - onelevel (2D original-old)
-    - twolevel (2D original-old)
-* jobscripts   ::
-    - preprocessKLE.sh     :: generates KLE/PCE data
-    - preprocessMESH.sh :: generates GMSH/DDM data
-    - preprocess.sh           ::  Generates KLE/PCE data and GMSH/DDM data
-    
-    - processFEniCS.sh    :: generates FEniCS/DDM assembly
-    - processFEniCS_MPI.sh :: generates FEniCS/DDM assembly simultaneously in each core for each subdomain by parallel code
-     
-    - processMPI.sh          :: MPI/PETSc compile and execute
-    
-* external ::
-    - puffin     :: external matlab FEM package
-    - dolfin     :: external python/C++ FEM package
-* data   ::
-    - klePceData :: KLE and PCE data
-    - mallocData :: malloc allocation data
-    - meshData   :: preprocessed mesh data
-    - vtkOutputs  :: outputs of simulation
-* docs ::
-    - contains project related documents
-
-### Submit the job ###
-* $ qsub run_ddm.sh     !! submit the job
-* $ qstat -u userID     !! check status
-* $ qdel jobID          !! kill the job
-
-### Once status is complete then check ###
-* $ more outputfile*
-* $ more errorfile*
-
-### Output visualization : ###
-* $ paraview out_deterministic.vtk               
-
-### Clean compilation/output data ###
-* $ sh clean.sh             :: cleans everything
-
-### Who do I talk to? ###
-* Sudhi Sharma P V : sudhi.pv@cmail.carleton.ca
-
-
-### Reference ##
-* CMAME-Ajit: [Scalable Domain Decomposition Solvers for Stochastic PDEs in High Performance Computing](http://www.sciencedirect.com/science/article/pii/S0045782516313056)
+## References
+- CMAME-Ajit: [Scalable Domain Decomposition Solvers for Stochastic PDEs in High Performance Computing](http://www.sciencedirect.com/science/article/pii/S0045782516313056)
+- Vasudevan, Padillath & Sharma, Sudhi (2023), *Scalable Domain Decomposition Methods for Nonlinear and Time-Dependent Stochastic Systems*, Carleton University. DOI: [10.22215/etd/2023-15817](https://doi.org/10.22215/etd/2023-15817).
