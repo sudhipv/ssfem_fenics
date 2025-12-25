@@ -1,0 +1,171 @@
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+-- Boost version: 1.60.0
+-- Found the following Boost libraries:
+--   filesystem
+--   timer
+--   program_options
+--   iostreams
+--   system
+--   chrono
+--   regex
+-- Found PythonInterp: /home/sudhipv/fenics_17_cedarcopy/bin/python3 (found suitable version "3.5.4", minimum required is "3")
+-- Checking for one of the modules 'craypetsc_real;PETSc'
+-- Checking for package 'PETSc4Py'
+-- PETSc4py could not be found. Be sure to set PYTHONPATH appropriately. (missing: PETSC4PY_INCLUDE_DIRS PETSC4PY_VERSION)
+-- Checking for one of the modules 'crayslepc_real;SLEPc'
+-- SLEPc could not be found. Be sure to set SLEPC_DIR. (missing: SLEPC_FOUND) (Required is at least version "3.7")
+-- Checking for package 'SCOTCH-PT'
+-- Found SCOTCH (version 6)
+-- Checking for package 'AMD'
+-- Checking for package 'UMFPACK'
+-- Checking for package 'AMD'
+-- Checking for package 'CHOLMOD'
+-- Checking for package 'AMD'
+-- A library with BLAS API not found. Please specify library location.
+-- LAPACK requires BLAS
+-- UMFPACK could not be found. Be sure to set UMFPACK_DIR. (missing: BLAS_LIBRARIES)
+-- Checking for package 'CHOLMOD'
+-- Checking for package 'AMD'
+-- A library with BLAS API not found. Please specify library location.
+-- LAPACK requires BLAS
+CMake Warning (dev) at CMakeLists.txt:534 (find_package):
+  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  Environment variable HDF5_ROOT is set to:
+
+    /cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/MPI/intel2016.4/openmpi2.1/hdf5-mpi/1.8.18
+
+  For compatibility, CMake is ignoring the variable.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- HDF5: Using hdf5 compiler wrapper to determine C configuration
+-- Checking for Trilinos
+-- Unable to find Trilinos (>= 12.4.0)
+-- Trilinos could not be found
+-- Checking for package 'Sphinx'
+-- Could NOT find Sphinx (missing: SPHINX_EXECUTABLE SPHINX_VERSION_OK) (Required is at least version "1.1.0")
+-- Found VTK: /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/16.09/lib/cmake/vtk-7.0 (found version "7.0")
+-- The following features have been enabled:
+
+ * BUILD_SHARED_LIBS, Build DOLFIN with shared libraries.
+ * DOLFIN_AUTO_DETECT_MPI, Detect MPI automatically (turn this off to use the MPI compiler wrappers directly via setting CXX, CXX, FC).
+ * DOLFIN_WITH_LIBRARY_VERSION, Build with library version information.
+ * DOLFIN_ENABLE_GTEST, Enable C++ unit tests with Google Test if DOLFIN_ENABLE_TESTING is true (requires Internet connection to download Google Test when first configured).
+ * DOLFIN_ENABLE_DOCS, Enable generation of documentation.
+ * DOLFIN_SKIP_BUILD_TESTS, Skip build tests for testing usability of dependency packages.
+ * CMAKE_INSTALL_RPATH_USE_LINK_PATH, Add paths to linker search and installed rpath.
+ * DOLFIN_ENABLE_OPENMP, Compile with support for OpenMP.
+ * DOLFIN_ENABLE_MPI, Compile with support for MPI.
+ * DOLFIN_ENABLE_PETSC, Compile with support for PETSc.
+ * DOLFIN_ENABLE_PETSC4PY, Compile with support for PETSc4py.
+ * DOLFIN_ENABLE_SLEPC, Compile with support for SLEPc.
+ * DOLFIN_ENABLE_SLEPC4PY, Compile with support for SLEPc4py.
+ * DOLFIN_ENABLE_TRILINOS, Compile with support for Trilinos.
+ * DOLFIN_ENABLE_UMFPACK, Compile with support for UMFPACK.
+ * DOLFIN_ENABLE_CHOLMOD, Compile with support for CHOLMOD.
+ * DOLFIN_ENABLE_SCOTCH, Compile with support for SCOTCH.
+ * DOLFIN_ENABLE_PARMETIS, Compile with support for ParMETIS.
+ * DOLFIN_ENABLE_ZLIB, Compile with support for zlib.
+ * DOLFIN_ENABLE_PYTHON, Compile with support for Python.
+ * DOLFIN_ENABLE_SPHINX, Compile with support for Sphinx.
+ * DOLFIN_ENABLE_HDF5, Compile with support for HDF5.
+ * DOLFIN_ENABLE_VTK, Compile with support for VTK.
+
+-- The following OPTIONAL packages have been found:
+
+ * MPI, Message Passing Interface (MPI)
+   Enables DOLFIN to run in parallel with MPI
+ * OpenMP, Open Multi-Processing API
+   Enables DOLFIN to run in parallel with OpenMP
+ * PETSc (required version >= 3.7), Portable, Extensible Toolkit for Scientific Computation, <https://www.mcs.anl.gov/petsc/>
+   Enables the PETSc linear algebra backend
+ * SCOTCH, Programs and libraries for graph, mesh and hypergraph partitioning, <https://www.labri.fr/perso/pelegrin/scotch>
+   Enables parallel graph partitioning
+ * Threads
+ * CHOLMOD, Sparse Cholesky factorization library for sparse matrices, <http://faculty.cse.tamu.edu/davis/suitesparse.html>
+ * HDF5, Hierarchical Data Format 5 (HDF5), <https://www.hdfgroup.org/HDF5>
+ * ZLIB, Compression library, <http://www.zlib.net>
+ * VTK, The Visualization Toolkit - A high level 3D visualization library, <https://www.vtk.org>
+   Enables plotting with VTK as backend
+
+-- The following REQUIRED packages have been found:
+
+ * Boost, Boost C++ libraries, <http://www.boost.org>
+ * Eigen3 (required version >= 3.2.0), Lightweight C++ template library for linear algebra, <http://eigen.tuxfamily.org>
+ * PythonInterp (required version >= 3), Interactive high-level object-oriented language, <http://www.python.org>
+   Needed for the Python interface to DOLFIN
+ * PythonLibs (required version == 3.5.4), Include paths and libraries for Python
+ * NumPy, Array processing for numbers, strings, records, and objects in Python., <http://www.numpy.org>
+   Needed for the Python interface to DOLFIN
+ * SWIG, Tool to wrap C/C++ libraries in high-level languages, <http://swig.org>
+   Needed for the Python interface to DOLFIN
+ * UFC (required version >= 2017.1), Unified language for form-compilers (part of FFC), <https://bitbucket.org/fenics-project/ffc>
+ * PkgConfig
+
+-- The following features have been disabled:
+
+ * CMAKE_USE_RELATIVE_PATHS, Use relative paths in makefiles and projects.
+ * DOLFIN_ENABLE_CODE_COVERAGE, Enable code coverage.
+ * DOLFIN_ENABLE_TESTING, Enable testing.
+ * DOLFIN_ENABLE_BENCHMARKS, Enable benchmark programs.
+ * DOLFIN_DEPRECATION_ERROR, Turn deprecation warnings into errors.
+ * DOLFIN_IGNORE_PETSC4PY_VERSION, Ignore version of PETSc4py.
+
+-- The following OPTIONAL packages have not been found:
+
+ * PETSc4py, Python bindings for PETSc, <https://bitbucket.org/petsc/petsc4py/>
+ * SLEPc (required version >= 3.7), Scalable Library for Eigenvalue Problem Computations, <http://slepc.upv.es/>
+ * UMFPACK, Sparse LU factorization library, <http://faculty.cse.tamu.edu/davis/suitesparse.html>
+ * BLAS, Basic Linear Algebra Subprograms, <http://netlib.org/blas/>
+ * Sphinx (required version >= 1.1.0), Python documentation generator, <http://www.sphinx-doc.org>
+   Needed to build documentation
+
+--
+-- Generating demo source files from reStructuredText
+-- --------------------------------------------------
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/auto-adaptive-poisson/cpp/AdaptivePoisson.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/auto-adaptive-poisson/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/auto-adaptive-poisson/python/demo_auto-adaptive-poisson.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/biharmonic/cpp/Biharmonic.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/biharmonic/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/biharmonic/python/demo_biharmonic.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/built-in-meshes/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/built-in-meshes/python/demo_built-in-meshes.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/cahn-hilliard/python/demo_cahn-hilliard.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/eigenvalue/cpp/StiffnessMatrix.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/eigenvalue/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/eigenvalue/python/demo_eigenvalue.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/hyperelasticity/cpp/HyperElasticity.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/hyperelasticity/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/hyperelasticity/python/demo_hyperelasticity.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/maxwell-eigenvalues/python/demo_maxwell-eigenvalues.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/mixed-poisson/cpp/MixedPoisson.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/mixed-poisson/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/mixed-poisson/python/demo_mixed-poisson.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/nonlinear-poisson/python/demo_nonlinear-poisson.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/nonmatching-interpolation/cpp/P1.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/nonmatching-interpolation/cpp/P3.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/nonmatching-interpolation/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/nonmatching-interpolation/python/demo_nonmatching-interpolation.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/poisson/cpp/Poisson.ufl
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/poisson/cpp/main.cpp
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/poisson/python/demo_poisson.py
+extract written to /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/demo/documented/singular-poisson-rst/python/demo_singular-poisson-rst.py
+CMake Deprecation Warning at demo/CMakeLists.txt:7 (cmake_policy):
+  The OLD behavior for policy CMP0004 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+
+
+-- Found PythonInterp: /home/sudhipv/fenics_17_cedarcopy/bin/python3 (found version "3.5.4")
+-- Disabling generation of documentation because Sphinx is missing.
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/sudhipv/fenics_17_cedarcopy/dolfin_17_cedarcopy/build

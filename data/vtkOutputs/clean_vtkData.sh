@@ -1,0 +1,3 @@
+rm *.vtk
+rm *.dat
+

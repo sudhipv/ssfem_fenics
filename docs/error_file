@@ -1,0 +1,174 @@
+##### Errors found while installing and the solution links from internet #####
+
+NOTE: THESE ARE NOT THE EXACT SOLUTIONS TO ANY PROBLEMS MENTIONED HERE AND MAY OR MAYN'T SOLVE YOUR PROBLEM. THESE SHOULD BE TRIED OUT ONLY AFTER PRELIMINARY DEBUGGING AND TRIAL AND ERRORS FOR THE PROBLEM.
+ONE SHOULD CONTACT support@computecanada.ca REGARDING THE ERROR AND EVEN AFTER THEIR RESPONSE YOU WERE NOT ABLE TO SOLVE THE ISSUE, THEN YOU CAN TRY THESE OUT.
+
+###########################################################
+
+1. CMake Error at dolfin/CMakeLists.txt:60 (add_library):
+  Target "dolfin" links to target "Boost::program_options" but the target was
+  not found.  Perhaps a find_package() call is missing for an IMPORTED
+  target, or an ALIAS target is missing?
+
+sol : https://groups.google.com/forum/#!searchin/fenics-support/cmake$20boost|sort:date/fenics-support/SBHRa1fCG14/rLxH3lzTBgAJ
+
+update :  Not working. Gives new error -
+CMake Error at cmake/modules/FindBoost.cmake:7:
+  Parse error.  Expected a command name, got unquoted argument with text
+  "<!DOCTYPE".
+Call Stack (most recent call first):
+  CMakeLists.txt:313 (find_package)
+
+Answer : UPDATE CMAKE TO VERSION HIGHER THAN 11.0
+
+#################################################################
+
+2. import mesh as ms not recognized. FENICS not able to be run in parallel.
+
+For CEDAR and GRAHAM
+
+Answer : Go to the particular file in meshio and comment out the line in __init__.py file causing error
+
+#####################################################################
+
+3. MPI4PY not working for Niagara or Beluga
+
+Answer : Niagara :
+
+Try installing FEniCS with intel, intel-mpi and intelpython modules inside NiaEnv
+
+Beluga :
+
+Install fenics the same way as it is installed in CEDAR, loading same modules and compilers.
+
+################################################################
+
+4. OSError: [Errno 30] Read-only file system: '/home/a/asarkar/sudhipv/packages/fenics_intel/.cache'
+
+Answer : $HOME directory is read only. Try running the code once in login node first to create a cache directory and then try in compute nodes.
+
+##################################################################
+
+5. KNOWN ERROR : while fenics assembly code :
+
+Local abort after MPI_FINALIZE started completed successfully, bu
+t am not able to aggregate error messages, and not able to guarantee that all ot
+her processes were killed!
+*** The MPI_Comm_rank() function was called after MPI_FINALIZE was invoked.
+*** This is disallowed by the MPI standard.
+
+
+Answer : Not sure why this happens. It happens after successful creation of matrices and saving them so left untouched.
+
+#############################################################################
+
+6. KNOWN ERROR:
+
+A process has executed an operation involving a call to the
+"fork()" system call to create a child process.  Open MPI is currently
+operating in a condition that could result in memory corruption or
+other system errors; your job may hang, crash, or produce silent
+data corruption.  The use of fork() (or system() or other calls that
+create child processes) is strongly discouraged.
+
+The process that invoked fork was:
+
+  Local host:          [[45870,1],307] (PID 27269)
+
+If you are *absolutely sure* that your application will successfully
+and correctly survive a call to fork(), you may disable this warning
+by setting the mpi_warn_on_fork MCA parameter to 0.
+--------------------------------------------------------------------------
+
+
+Answer : Error appears every time and doesn't interfere with the successful running of code. Left untouched.
+
+
+############################################################################
+
+7. KNOWN ERROR : sys.c:619  UCX  ERROR shmget(size=4263936 flags=0x7b0) for mm_recv_de
+sc failed: No space left on device, please check shared memory limits by 'ipcs -l'
+
+
+Possible Solution :
+
+NIAGARA and BELUGA
+
+This may be related to an internal shared memory problem in the version
+of UCX used with Openmpi.    Can you try with the following,
+
+mpiexec -np 2 --mca pml ob1
+
+Also if you use the Niagara software stack you can try it using IntelMPI
+which does not use UCX to see if that makes any difference.
+
+module load intel/2019u3  intelmpi/2019u3 petsc
+
+
+GRAHAM and CEDAR
+
+On Graham they have an earlier generation of Infiniband so the underlying
+communication libraries are a bit different.  Also it appears you switched to
+OpenMPI V2 vs V3.  Is there a reason you switched to the earlier version of
+OpenMPI?
+
+Try using
+
+mpirun --mca mtl ^mxm  ./a.out
+
+or
+
+mpirun --mca btl openib ./a.out
+
+The compiler is not the issue, its the underlying communications libraries that
+MPI is using.  You are trying to send very large messages and some of the
+protocols do not support that large of a message as they are tuned for higher
+rate smaller messages.    The communications protocols used by MPI are specific
+to the local systems interconnect so is highly recommended to stick to the
+system provided ones.  If you run "ompi_info -a" you will see all the various
+options available, however determining which non-default ones to use is not a
+straightfoward task.
+
+############################################################################
+
+
+8 . ULIMIT error 
+
+
+There is a limit the OS sets for number of files which can be opened simultaneously. This is usually 1000 for some systems. While using a large number of subdomains, use
+
+ulimit -a :  to view this number 
+
+ulimit -n 100000 : to change this number only for the particular session
+
+
+
+9.  OSError: [Errno 122] Disk quota exceeded: '../data/Amats/subdom921/ADii37.dat'
+
+When the size of the system is too large that memory is not enough to even save the subdomain level matrices. Check your disk usage using the command below and verify whether you have exceeded 
+The file number of the disk space itself. Very unlikely you have exceeded disk space since it is 20 TB at this time. But number of files is just 1000k which is highly likely since we are storing so many files related to mesh and matrices.
+
+diskusage_report
+diskusage_report
+                             Description                Space           # of files
+                    /home (user sudhipv)            1249M/50G             21k/500k
+                 /scratch (user sudhipv)             128G/20T          1000k/1000k
+                /project (group sudhipv)              0/2048k              0/5000k
+            /project (group def-asarkar)            79G/1000G           425k/5000k
+         /nearline (project def-asarkar)            48k/2000G              12/5000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

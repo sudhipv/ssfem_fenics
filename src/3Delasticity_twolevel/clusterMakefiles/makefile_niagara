@@ -1,0 +1,25 @@
+
+#LLAPACK = -llapack 
+#LBLAS = -lblas
+MAIN = ./a.out
+#COMP = gfortran
+#COMP_OPS = -O2
+
+
+#PETSC_DIR=${HOME}/packages/petsc/petsc-3.7.5
+#PETSC_ARCH=arch-linux2-c-opt
+
+#PETSC_DIR=${HOME}/packages/petsc/petsc-3.9.2
+#PETSC_ARCH=arch-linux2-c-opt
+
+
+include ${PETSC_DIR}/lib/petsc/conf/variables
+include ${PETSC_DIR}/lib/petsc/conf/rules
+
+LIST = common.o myCommon.o variationalform.o PETScAssembly.o assembly.o PETScommon.o PETScSolvers.o main.o
+
+all : $(LIST) chkopts
+	-${FLINKER} -o $(MAIN) $(LIST) ${PETSC_KSP_LIB}
+
+# 	${RM} -f *.o *.mod
+#

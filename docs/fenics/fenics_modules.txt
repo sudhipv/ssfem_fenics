@@ -1,0 +1,143 @@
+
+
+MODULES FOR FENICS IN DIFFERENT MACHINES
+
+
+
+
+FEniCS on CEDAR
+
+
+Currently Loaded Modules:
+
+  1) nixpkgs/16.09     (S)   5) intel/2016.4  (t)   9) eigen/3.3.5       (math)  13) hdf5-mpi/1.8.18 (io)
+
+  2) gcccore/.5.4.0    (H)   6) openmpi/2.1.1 (m)  10) python/3.5.4      (t)     14) petsc/3.7.5     (t)
+
+  3) icc/.2016.4.258   (H)   7) StdEnv/2016.4 (S)  11) scipy-stack/2017b (math)  15) fftw-mpi/3.3.6  (math)
+
+  4) ifort/.2016.4.258 (H)   8) boost/1.60.0  (t)  12) imkl/11.3.4.258   (math)
+
+
+  Where:
+
+   S:     Module is Sticky, requires --force to unload or purge
+
+   m:     MPI implementations / Implémentations MPI
+
+   math:  Mathematical libraries / Bibliothèques mathématiques
+
+   io:    Input/output software / Logiciel d'écriture/lecture
+
+   t:     Tools for development / Outils de développement
+
+   H:                Hidden Module
+
+
+
+
+
+FEniCS on GRAHAM
+
+
+Currently Loaded Modules:
+
+  1) nixpkgs/16.09     (S)   5) intel/2016.4  (t)   9) eigen/3.3.5       (math)  13) hdf5-mpi/1.8.18 (io)
+
+  2) gcccore/.5.4.0    (H)   6) openmpi/2.1.1 (m)  10) python/3.5.4      (t)     14) petsc/3.7.5     (t)
+
+  3) icc/.2016.4.258   (H)   7) StdEnv/2016.4 (S)  11) scipy-stack/2017b (math)  15) fftw-mpi/3.3.6  (math)
+
+  4) ifort/.2016.4.258 (H)   8) boost/1.60.0  (t)  12) imkl/11.3.4.258   (math)
+
+
+  Where:
+
+   S:     Module is Sticky, requires --force to unload or purge
+
+   m:     MPI implementations / Implémentations MPI
+
+   math:  Mathematical libraries / Bibliothèques mathématiques
+
+   io:    Input/output software / Logiciel d'écriture/lecture
+
+   t:     Tools for development / Outils de développement
+
+   H:                Hidden Module
+
+
+
+FEniCS on Niagara installed with CCEnv - where FEniCS with mpi4py was not working and it was informed to me that i have to install using NiaEnv, intel compilers, intel-mpi, intel python.
+
+Currently Loaded Modules:
+
+  1) CCEnv           (S)      5) icc/.2018.3.222   (H)   9) StdEnv/2018.3 (S)     13) scipy-                                                                                 stack/2017b (math)
+
+  2) nixpkgs/16.09   (S)      6) ifort/.2018.3.222 (H)  10) boost/1.68.0  (t)     14) hdf5-mpi/1.10.3   (io)
+
+  3) imkl/2018.3.222 (math)   7) intel/2018.3      (t)  11) eigen/3.3.5   (math)  15) fftw-mpi/3.3.8    (math)
+
+  4) gcccore/.7.3.0  (H)      8) openmpi/3.1.2     (m)  12) python/3.7.4  (t)     16) petsc/3.7.5
+
+
+  Where:
+
+   S:     Module is Sticky, requires --force to unload or purge
+
+   m:     MPI implementations / Implémentations MPI
+
+   math:  Mathematical libraries / Bibliothèques mathématiques
+
+   io:    Input/output software / Logiciel d'écriture/lecture
+
+   t:     Tools for development / Outils de développement
+
+   H:                Hidden Module
+
+
+
+
+FEniCS installed with NiaEnv - FEniCS with mpi4py has worked
+
+
+Currently Loaded Modules:
+
+  1) NiaEnv/2018a      4) sqlite/3.23.0     7) cmake/3.11.1  10) hdf5-mpi/1.8.20   13) trilinos/12.12.1  16) petsc/3.8.4
+
+  2) intel/2018.2      5) python/3.6.5      8) boost/1.66.0  11) swig/3.0.12       14) gmp/6.1.2
+
+  3) intelmpi/2018.2   6) anaconda3/5.1.0   9) eigen/3.3.4   12) netcdf-mpi/4.6.1  15) mpfr/4.0.1
+
+
+
+
+
+
+FEniCS on Beluga where mpi4py not working
+
+
+Currently Loaded Modules:
+
+  1) nixpkgs/16.09   (S)      5) icc/.2018.3.222   (H)   9) fftw-mpi/3.3.8  (math)  13) eigen/3.3.5       (math)
+
+  2) imkl/2018.3.222 (math)   6) ifort/.2018.3.222 (H)  10) boost/1.68.0    (t)     14) python/3.5.4      (t)
+
+  3) StdEnv/2018.3   (S)      7) intel/2018.3      (t)  11) hdf5-mpi/1.10.3 (io)    15) scipy-stack/2019a (math)
+
+  4) gcccore/.7.3.0  (H)      8) openmpi/3.1.2     (m)  12) petsc/3.7.5             16) cmake/3.12.3      (t)
+
+
+  Where:
+
+   S:     Module is Sticky, requires --force to unload or purge
+
+   m:     MPI implementations / Implémentations MPI
+
+   math:  Mathematical libraries / Bibliothèques mathématiques
+
+   io:    Input/output software / Logiciel d'écriture/lecture
+
+   t:     Tools for development / Outils de développement
+
+   H:                Hidden Module
+

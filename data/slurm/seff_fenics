@@ -1,0 +1,26 @@
+Job ID: 19376195
+Cluster: graham
+User/Group: sudhipv/sudhipv
+State: FAILED (exit code 1)
+Nodes: 10
+Cores per node: 32
+CPU Utilized: 01:22:24
+CPU Efficiency: 25.33% of 05:25:20 core-walltime
+Job Wall-clock time: 00:01:01
+Memory Utilized: 43.83 GB (estimated maximum)
+Memory Efficiency: 3.79% of 1.13 TB (3.61 GB/core)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
