@@ -199,8 +199,26 @@ Run from `jobscripts/<machine-name>/` (choose `cedar`, `niagara`, `beluga`, or `
 - `sh clean.sh` – remove build and output artifacts.
 
 ### Contact
-- Sudhi Sharma P V – `sudhi.pv@cmail.carleton.ca`
+- Sudhi Sharma P V – `sudhisharmapadillath@gmail.com`
 
-## References
-- CMAME-Ajit: [Scalable Domain Decomposition Solvers for Stochastic PDEs in High Performance Computing](http://www.sciencedirect.com/science/article/pii/S0045782516313056)
-- Vasudevan, Padillath & Sharma, Sudhi (2023), *Scalable Domain Decomposition Methods for Nonlinear and Time-Dependent Stochastic Systems*, Carleton University. DOI: [10.22215/etd/2023-15817](https://doi.org/10.22215/etd/2023-15817).
+## Reference
+
+> **[Scalable Domain Decomposition Methods for Nonlinear and Time-Dependent Stochastic Systems](https://doi.org/10.22215/etd/2023-15817)**
+
+**Authors:** Vasudevan, Padillath and Sharma, Sudhi  
+**Institution:** Carleton University (2023)  
+**DOI:** [10.22215/etd/2023-15817](https://doi.org/10.22215/etd/2023-15817)
+
+<details>
+<summary><b>Click to expand BibTeX citation</b></summary>
+
+```bibtex
+@phdthesis{vasudevan2023scalable,
+  title={Scalable Domain Decomposition Methods for Nonlinear and Time-Dependent Stochastic Systems},
+  author={Vasudevan, Padillath and Sharma, Sudhi},
+  year={2023},
+  school={Carleton University},
+  doi={10.22215/etd/2023-15817}
+}
+\```
+</details>
