@@ -3,6 +3,13 @@
 ## Overview
 This solver targets stochastic steady-state diffusion and static linear elasticity (2D & 3D) problems using domain decomposition methods with scalable one- and two-level preconditioners. The `master` branch keeps a clean copy of the code, while the `cedar`, `graham`, `niagara`, `beluga`, and other branches contain machine-specific adjustments tested on their respective clusters.
 
+
+<img width="775" height="893" alt="Screenshot 2025-12-25 at 7 22 53 PM" src="https://github.com/user-attachments/assets/f75f850b-7dba-42c9-ba27-3f1184cb66c4" />
+
+
+
+
+
 ## Core Components
 1. **FEniCS** – deterministic FE matrix/vector assembly.
 2. **PETSc** – sparse storage and linear algebra for stochastic FE matrices.
